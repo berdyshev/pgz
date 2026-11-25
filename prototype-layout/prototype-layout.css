@@ -1,0 +1,203 @@
+/* PROTOTYPE (throwaway) — новий макет pgz у стилі IDE для issue #73. Не мерджити в main. */
+
+/* ---------- спільне ---------- */
+
+.proto-iconbtn {
+  all: unset; cursor: pointer; color: #ccc; padding: 2px 6px; border-radius: 4px; font: 14px system-ui, sans-serif;
+}
+.proto-iconbtn:hover { background: #ffffff22; color: #fff; }
+#splashImg { display: none !important; }
+#rightBar { font-size: 0; } /* ховає зайвий «;» після iframe */
+#rightBar > * { font-size: 14px; }
+
+/* ========== A: IDE (activity bar + окреме вікно гри) ========== */
+[data-proto=A] #rightBar {
+  flex: 0 0 var(--proto-pw, 400px) !important; width: auto !important; max-width: none !important;
+  margin: 20px 0 20px 6px !important; position: relative; background: #1e1e1e !important;
+  border-radius: 10px; overflow: hidden; display: flex !important; flex-direction: column;
+}
+[data-proto=A] #rightBar.proto-closed { display: none !important; }
+[data-proto=A] #rightBar > #handbook { margin: 0 !important; flex: 1; height: auto !important; width: 100%; border: 0; }
+[data-proto=A] #resourceGallery { flex: 1; overflow: auto; margin: 0 !important; }
+[data-proto=A] #resourceGallery .frame { width: auto; max-height: none !important; margin: 10px; height: calc(100% - 20px); box-sizing: border-box; }
+[data-proto=A] #resourceGallery .frame h3 { display: none; }
+[data-proto=A] #resourceGallery .controls-bar > button:first-child { display: none; } /* «➕» переїхав у заголовок панелі */
+[data-proto=A] #resourceGallery .controls-bar:not(:has(.file-controls[style*="inline"])) { display: none; }
+[data-proto=A] #resourceGallery .assets-items-scroll { max-width: none; flex: 1; }
+#protoPanelHead {
+  flex: 0 0 auto; min-height: 36px; display: flex; align-items: center; gap: 6px; padding: 2px 8px;
+  background: #252526; color: #ddd; font: 600 12px system-ui, sans-serif;
+}
+#protoPanelTitle { letter-spacing: .05em; text-transform: uppercase; margin-right: auto; }
+#protoPanelHead { flex-wrap: wrap; }
+#protoPanelHead .actions { display: flex; flex-wrap: wrap; gap: 4px; order: 3; width: 100%; padding-bottom: 6px; }
+#protoPanelHead .actions:empty { display: none; }
+.proto-action {
+  all: unset; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 6px;
+  background: #3a3d41; color: #eee; font: 12px system-ui, sans-serif;
+}
+.proto-action:hover { background: #007acc; }
+.proto-action img { width: 18px; height: 18px; }
+#protoPanelResizer { position: absolute; left: 0; top: 0; bottom: 0; width: 6px; cursor: col-resize; z-index: 5; }
+#protoPanelResizer:hover, .proto-resizing #protoPanelResizer { background: #007acc; }
+.proto-resizing iframe, .proto-resizing .CodeMirror { pointer-events: none; } /* щоб під час перетягування нічого не перехоплювало мишу */
+.proto-resizing { user-select: none; }
+#protoActivity {
+  flex: 0 0 68px; display: flex; flex-direction: column; align-items: center; gap: 4px; padding-top: 20px;
+  background: #2a2a2a; margin-right: 6px;
+}
+#protoActivity button {
+  all: unset; cursor: pointer; width: 66px; padding: 6px 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  color: #aaa; border-right: 3px solid transparent; font: 10px system-ui, sans-serif;
+}
+#protoActivity button:hover { color: #fff; background: #ffffff10; }
+#protoActivity button.active { color: #fff; border-right-color: #4fc3f7; }
+#protoActivity svg, #protoLayoutBtns svg { width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+/* margin-left:auto тримає кнопки праворуч навіть коли #hintBar схований */
+#protoLayoutBtns { display: flex; gap: 4px; margin: 20px 10px 0 auto; }
+[data-proto=A] #hintBar { flex: 1; text-align: center; }
+#protoLayoutBtns button { all: unset; cursor: pointer; color: #888; padding: 4px; border-radius: 6px; display: grid; }
+#protoLayoutBtns button:hover { background: #ffffff18; color: #fff; }
+#protoLayoutBtns button .fill { fill: none; stroke: none; }
+#protoLayoutBtns button.on { color: #fff; }
+#protoLayoutBtns button.on .fill { fill: currentColor; }
+.proto-action svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+/* однотонний стиль: SVG-іконки на верхній панелі */
+[data-icons=mono] #toolPanel .toolButton { height: 30px; padding: 5px; border-radius: 8px; }
+[data-icons=mono] #toolPanel .toolButton:hover { background: #ffffff18; }
+#protoLayoutBtns svg { width: 22px; height: 22px; }
+
+/* консоль A: нижня панель як у VS Code */
+[data-proto=A] #consoleContainer {
+  height: var(--proto-ch, 200px) !important; min-height: 60px !important; max-height: none !important;
+  margin-top: 0 !important; border-radius: 0 0 10px 10px !important;
+}
+#protoConsoleHead {
+  margin: 6px 0 0 10px; height: 28px; display: flex; align-items: center; justify-content: space-between;
+  padding: 0 8px; background: #252526; color: #ddd; border-radius: 10px 10px 0 0; cursor: row-resize;
+  font: 600 12px system-ui, sans-serif; letter-spacing: .05em; text-transform: uppercase;
+}
+#protoConsoleHead .tab { border-bottom: 2px solid #007acc; padding: 4px 2px; cursor: default; }
+#protoConsoleHead .tools { cursor: default; }
+
+/* гра: окреме вікно, не блокує сторінку, тягнеться за заголовок */
+[data-proto=A] #gameModal { pointer-events: none; }
+[data-proto=A] #gameModal > div { pointer-events: auto; box-shadow: 0 10px 40px rgba(0,0,0,.7); }
+[data-proto=A] #gameModal > div > div:first-child { cursor: move; }
+
+/* ========== A: верхня панель ========== */
+[data-proto=A] #topPanel { position: relative; }
+/* логотип = верхня частина media/splash.png (геймпад «PG»), без підпису */
+#protoLogo {
+  width: 66px; height: 40px; flex: 0 0 auto; margin-right: 8px; border-radius: 8px;
+  background: url("../media/splash.png") no-repeat #140b20; background-size: 100px auto; background-position: -17px -45px;
+}
+/* назва проєкту по центру панелі */
+/* по центру панелі; вертикально на одній лінії з кнопками (їхній центр = 30px) */
+[data-proto=A] #projectNameInput { position: absolute; left: 50%; top: 30px; transform: translate(-50%, -50%); margin: 0 !important; text-align: center; }
+/* як поля в діалогах: сіре поле на темній панелі, майже прямі кути (як рядок пошуку в заголовку VS Code) */
+[data-proto=A] #projectNameInput {
+  background: #3c3c3c !important; color: #dddddd !important; border: 1px solid #555 !important; border-radius: 4px !important;
+  height: 28px; padding: 0 10px !important; font: 13px system-ui, "Segoe UI", sans-serif !important; outline: none;
+}
+[data-proto=A] #projectNameInput:hover { border-color: #6a6a6a !important; }
+[data-proto=A] #projectNameInput:focus { border-color: #007acc !important; box-shadow: 0 0 0 1px #007acc; color: #fff !important; }
+[data-proto=A] #hintBar { display: none !important; }
+#protoToast {
+  position: fixed; right: 16px; bottom: 70px; z-index: 100001; max-width: 360px; padding: 10px 14px;
+  background: #252526; color: #ccc; border: 1px solid #3c3c3c; border-left: 3px solid #007acc; border-radius: 6px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.5); font: 13px/1.4 system-ui, sans-serif;
+  opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; pointer-events: none;
+}
+#protoToast.show { opacity: 1; transform: none; }
+
+/* ========== A: діалоги в одному стилі (як у VS Code) ========== */
+[data-proto=A] .modal-overlay,
+[data-proto=A] #newProjectModal,
+[data-proto=A] #importModal,
+[data-proto=A] .error-modal-overlay,
+[data-proto=A] #imageEditorModal { background: rgba(0, 0, 0, .55) !important; backdrop-filter: blur(2px) !important; }
+
+[data-proto=A] .modal-content,
+[data-proto=A] .modal-mcontent,
+[data-proto=A] .modal-error {
+  background: #252526 !important; color: #cccccc !important; border: 1px solid #3c3c3c !important;
+  border-radius: 10px !important; box-shadow: 0 16px 48px rgba(0, 0, 0, .6) !important;
+  font: 13px/1.5 system-ui, "Segoe UI", sans-serif !important; padding: 0 !important; overflow: hidden;
+}
+/* шрифт інтерфейсу, але не для іконок Font Awesome (<i class="fa ...">) */
+[data-proto=A] :is(.modal-content, .modal-mcontent, .modal-error) :not(i):not(.fa):not([class*="fa-"]) { font-family: system-ui, "Segoe UI", sans-serif; }
+[data-proto=A] .CodeMirror, [data-proto=A] .CodeMirror *, [data-proto=A] .error-message { font-family: monospace !important; }
+
+[data-proto=A] .modal-header,
+[data-proto=A] .error-modal-header {
+  background: transparent !important; border-bottom: 1px solid #3c3c3c !important; padding: 10px 14px !important;
+  display: flex; align-items: center; justify-content: space-between;
+}
+[data-proto=A] .modal-title, [data-proto=A] .error-modal-header h3, [data-proto=A] #modal-title {
+  font: 600 14px system-ui, sans-serif !important; color: #ffffff !important; margin: 0 !important; letter-spacing: 0 !important;
+}
+[data-proto=A] .error-modal-header h3::before { content: "● "; color: #f14c4c; }
+[data-proto=A] .modal-close {
+  background: none !important; border: 0 !important; color: #aaaaaa !important; font-size: 20px !important;
+  width: 28px; height: 28px; border-radius: 6px !important; cursor: pointer; line-height: 1;
+}
+[data-proto=A] .modal-close:hover { background: #ffffff1a !important; color: #fff !important; }
+[data-proto=A] .modal-body, [data-proto=A] #newProjectModal form, [data-proto=A] .modal-mcontent > p { padding: 14px !important; }
+[data-proto=A] .modal-mcontent > h3 { padding: 12px 14px; border-bottom: 1px solid #3c3c3c; }
+[data-proto=A] .modal-footer, [data-proto=A] .modal-buttons {
+  background: transparent !important; border-top: 1px solid #3c3c3c !important; padding: 10px 14px !important;
+  display: flex; justify-content: flex-end; gap: 8px;
+}
+[data-proto=A] .modal-content label, [data-proto=A] .modal-content p { color: #cccccc !important; }
+
+/* поля вводу */
+[data-proto=A] :is(.modal-content, .modal-mcontent) :is(input[type=text], input[type=number], select, textarea) {
+  background: #3c3c3c !important; color: #eeeeee !important; border: 1px solid #555 !important;
+  border-radius: 4px !important; padding: 6px 8px !important; font: 13px system-ui, sans-serif !important; outline: none;
+}
+[data-proto=A] :is(.modal-content, .modal-mcontent) :is(input, select, textarea):focus { border-color: #007acc !important; box-shadow: 0 0 0 1px #007acc; }
+[data-proto=A] .modal-content input[type=range] { accent-color: #007acc; }
+[data-proto=A] .modal-content input[type=radio] { accent-color: #007acc; }
+
+/* кнопки: одна основна (синя), решта нейтральні, небезпечна — лише червоний текст */
+[data-proto=A] :is(.btn-primary, .btn-ok, #newProjectModal button[type=submit], #importFileBtnContainer button, #recoverModal .modal-info + * button, .btn-restore) {
+  background: #0e639c !important; color: #fff !important; border: 0 !important; border-radius: 4px !important;
+  padding: 6px 14px !important; font: 13px system-ui, sans-serif !important; cursor: pointer; box-shadow: none !important; transform: none !important;
+}
+[data-proto=A] :is(.btn-primary, .btn-ok, #newProjectModal button[type=submit], #importFileBtnContainer button):hover { background: #1177bb !important; }
+[data-proto=A] :is(.btn-secondary, .btn-cancel, #newProjectModal button[type=button]) {
+  background: #3a3d41 !important; color: #fff !important; border: 0 !important; border-radius: 4px !important;
+  padding: 6px 14px !important; font: 13px system-ui, sans-serif !important; cursor: pointer; box-shadow: none !important; transform: none !important;
+}
+[data-proto=A] :is(.btn-secondary, .btn-cancel, #newProjectModal button[type=button]):hover { background: #45494e !important; }
+[data-proto=A] .btn-danger {
+  background: transparent !important; color: #f48771 !important; border: 1px solid #f48771 !important; border-radius: 4px !important;
+  padding: 5px 13px !important; font: 13px system-ui, sans-serif !important; cursor: pointer;
+}
+[data-proto=A] .btn-danger:hover { background: #f4877122 !important; }
+
+/* «Файли»: нейтральні картки замість зеленої/синьої/сірої */
+[data-proto=A] .file-action-button {
+  background: #2d2d30 !important; color: #cccccc !important; border: 1px solid #3c3c3c !important;
+  border-radius: 8px !important; box-shadow: none !important;
+}
+[data-proto=A] .file-action-button:hover { border-color: #007acc !important; background: #2a2d2e !important; transform: none !important; }
+[data-proto=A] .file-action-button .card-header { border-bottom-color: #3c3c3c !important; }
+[data-proto=A] .file-action-button .card-header h3 { color: #ffffff !important; }
+[data-proto=A] .file-action-button .card-header i { color: #4fc3f7 !important; }
+[data-proto=A] .file-action-button :is(code, kbd, .shortcut, blockquote, pre) { background: #1e1e1e !important; border-color: #007acc !important; color: #ccc !important; }
+
+/* повідомлення про помилку */
+[data-proto=A] .error-message { background: #1e1e1e !important; border-left: 3px solid #f14c4c !important; color: #f48771 !important; border-radius: 4px; }
+
+/* інформаційні блоки (відновлення коду тощо) */
+[data-proto=A] .modal-info { background: #1e1e1e !important; border-left: 3px solid #007acc !important; color: #cccccc !important; }
+[data-proto=A] .modal-content [class*=warning] { background: #1e1e1e !important; border-left: 3px solid #cca700 !important; color: #cccccc !important; }
+
+/* імпорт: категорії-«чипи» */
+[data-proto=A] #importCategories button { background: #3a3d41 !important; border: 0 !important; color: #ddd !important; padding: 3px 10px !important; border-radius: 999px !important; font: 12px system-ui, sans-serif !important; }
+[data-proto=A] #importCategories button[style*="0, 123, 255"], [data-proto=A] #importCategories button[style*="#007bff"] { background: #0e639c !important; color: #fff !important; }
+
+/* редактор зображень (iframe): рамка */
+[data-proto=A] #drawEditorFrame { border: 1px solid #3c3c3c !important; border-radius: 10px !important; box-shadow: 0 16px 48px rgba(0, 0, 0, .6); background: #1e1e1e !important; }
